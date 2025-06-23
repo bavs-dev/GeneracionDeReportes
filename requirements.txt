@@ -1,0 +1,13 @@
+Flask
+Flask-SQLAlchemy
+Flask-Migrate
+Flask-Login
+Flask-WTF
+python-dotenv
+bcrypt
+itsdangerous
+pandas
+openpyxl
+xhtml2pdf
+Flask-Mail
+pyodbc

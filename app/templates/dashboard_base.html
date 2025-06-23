@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Dashboard{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+        }
+        .sidebar {
+            width: 250px;
+            background: #f8f9fa;
+            padding: 1rem;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+        .content {
+            flex: 1;
+            padding: 1.5rem;
+        }
+        .navbar-custom {
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .user-info i {
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h5 class="mb-4"><i class="bi bi-speedometer2"></i> Menú</h5>
+        <ul class="nav flex-column">
+
+            <!-- Puedes agregar más elementos aquí -->
+        </ul>
+    </div>
+
+    <div class="content">
+        <nav class="navbar navbar-expand-lg navbar-custom mb-4">
+            <div class="container-fluid justify-content-between">
+                <span class="navbar-brand">Dashboard</span>
+                <div class="user-info">
+                    <i class="bi bi-person-circle"></i>
+                    <span>{{ usuario.usuario }}</span>
+                    <a class="btn btn-outline-danger btn-sm" href="{{ url_for('auth.logout') }}">Cerrar sesión</a>
+                </div>
+            </div>
+        </nav>
+
+        {% block content %}
+        {% endblock %}
+    </div>
+
+</body>
+</html>
