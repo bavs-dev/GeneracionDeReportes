@@ -1,12 +1,13 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from app.dao.daoImpl.usuario_dao_impl import UsuarioDAOImpl
 from app.models.usuario import Usuario, Departamento, Rol
-
+from flask_login import login_user, logout_user, login_required, current_user
 usuario_bp = Blueprint('usuarios', __name__)
 dao = UsuarioDAOImpl()
 
 
 @usuario_bp.route('/usuarios')
+@login_required
 def listar_usuarios():
     usuarios = dao.obtener_todos()
     departamentos = Departamento.query.all()
@@ -15,6 +16,7 @@ def listar_usuarios():
 
 
 @usuario_bp.route('/usuarios/crear', methods=['POST'])
+@login_required
 def crear_usuario():
     nuevo_usuario = Usuario(
         nombre=request.form['nombre'],
@@ -32,6 +34,7 @@ def crear_usuario():
 
 
 @usuario_bp.route('/usuarios/editar/<int:id>', methods=['POST'])
+@login_required
 def editar_usuario(id):
     usuario = dao.obtener_por_id(id)
     if usuario:
@@ -53,6 +56,7 @@ def editar_usuario(id):
 
 
 @usuario_bp.route('/usuarios/eliminar/<int:id>', methods=['POST'])
+@login_required
 def eliminar_usuario(id):
     dao.eliminar(id)
     flash('Usuario eliminado', 'success')
