@@ -37,9 +37,18 @@ def create_app():
     # Registrar blueprints
     from app.controllers.auth_controller import auth
     from app.controllers.dashboard import main
+    from app.controllers.usuario_controller import usuario_bp  # Importa el Blueprint
+    from flask_login import current_user
 
     app.register_blueprint(auth)
     app.register_blueprint(main)
+    app.register_blueprint(usuario_bp)  # REGISTRO DEL CRUD DE USUARIOS
+
+    # Inyectar automáticamente 'usuario' en todas las plantillas
+    @app.context_processor
+    def inyectar_usuario():
+        return dict(usuario=current_user)
+
 
     # Ruta de inicio con verificación de base de datos
     @app.route('/')

@@ -1,0 +1,43 @@
+
+<div class="mb-3">
+    <label>Nombre</label>
+    <input type="text" class="form-control" name="nombre" required>
+</div>
+<div class="mb-3">
+    <label>Apellido Paterno</label>
+    <input type="text" class="form-control" name="apellidoP" required>
+</div>
+<div class="mb-3">
+    <label>Apellido Materno</label>
+    <input type="text" class="form-control" name="apellidoM" required>
+</div>
+<div class="mb-3">
+    <label>Usuario</label>
+    <input type="text" class="form-control" name="usuario" required>
+</div>
+<div class="mb-3">
+    <label>Correo</label>
+    <input type="email" class="form-control" name="correo" required>
+</div>
+<div class="mb-3">
+    <label>Contraseña</label>
+    <input type="password" class="form-control" name="password">
+</div>
+<div class="mb-3">
+    <label>Departamento</label>
+    <select name="departamento_id" class="form-select" required>
+        {% for d in departamentos %}
+            <option value="{{ d.id }}">{{ d.nombre }}</option>
+        {% endfor %}
+    </select>
+</div>
+<div class="mb-3">
+    <label>Rol</label>
+    <select name="rol_id" class="form-select" required>
+        {% for r in roles %}
+            <option value="{{ r.id }}">{{ r.nombre }}</option>
+        {% endfor %}
+    </select>
+</div>
+
+
