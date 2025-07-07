@@ -37,6 +37,13 @@ class Ticket(db.Model):
 
     estado_id = db.Column(db.Integer, db.ForeignKey('estados_ticket.id'), nullable=False, default=1)
     cat_calidad_id = db.Column(db.Integer, db.ForeignKey('cat_calidad.id'), nullable=True)
+    # Relación hacia la tabla CatPrioridad
+    prioridad = db.relationship('CatPrioridad', backref='tickets')
+
+
+    solicitante = db.relationship('Usuario', foreign_keys=[solicitante_id])
+    afectado = db.relationship('Usuario', foreign_keys=[afectado_id])
+    tecnico_asignado = db.relationship('Usuario', foreign_keys=[tecnico_asignado_id])
 
 
 class ComentarioTicket(db.Model):

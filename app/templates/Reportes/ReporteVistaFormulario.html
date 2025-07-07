@@ -1,0 +1,159 @@
+
+
+        <!-- Información del Ticket -->
+        <h5 class="mb-3">Información del Ticket</h5>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label class="form-label">Prioridad</label>
+                <select class="form-select"  name="cat_prioridad" required>
+                    <option value="">Seleccione Prioridad</option>
+                    {% for p in prioridad %}
+                        <option value="{{ p.id }}">{{ p.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="asunto" class="form-label">Asunto</label>
+                <input type="text" class="form-control" id="asunto" name="asunto" required>
+            </div>
+        </div>
+
+        <!-- Involucrados -->
+        <h5 class="mt-4 mb-3">Datos de los Involucrados</h5>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="solicitante_id" class="form-label">Solicitante</label>
+                <select class="form-select" id="solicitante_id" name="solicitante_id" required>
+                    <option value="">Seleccione Solicitante</option>
+                    {% for s in solicitante %}
+                        <option value="{{ s.id }}">{{ s.nombre }} {{ s.apellidoP }} {{ s.apellidoM }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="afectado_id" class="form-label">Afectado</label>
+                <select class="form-select" id="afectado_id" name="afectado_id" required>
+                    <option value="">Seleccione Afectado</option>
+                    {% for s in solicitante %}
+                        <option value="{{ s.id }}">{{ s.nombre }} {{ s.apellidoP }} {{ s.apellidoM }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <!-- Información Técnica -->
+        <h5 class="mt-4 mb-3">Información Técnica</h5>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="tema_soporte" class="form-label">Tema de Soporte</label>
+                <input type="text" class="form-control" id="tema_soporte" name="tema_soporte">
+            </div>
+            <div class="col-md-6">
+                <label for="area" class="form-label">Área</label>
+                <select class="form-select" id="area" name="area">
+                    <option value="">Seleccione Área</option>
+                    {% for a in area %}
+                        <option value="{{ a.id }}">{{ a.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="tipo_falla_id" class="form-label">Tipo de Falla</label>
+                <select class="form-select" id="tipo_falla_id" name="tipo_falla_id">
+                    <option value="">Seleccione Tipo de Falla</option>
+                    {% for t in tiposDeFalla %}
+                        <option value="{{ t.id }}">{{ t.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="service_tag" class="form-label">Service Tag</label>
+                <input type="text" class="form-control" id="service_tag" name="service_tag">
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="numero_serie" class="form-label">Número de Serie</label>
+                <input type="text" class="form-control" id="numero_serie" name="numero_serie">
+            </div>
+            <div class="col-md-6">
+                <label for="ip_equipo" class="form-label">IP del Equipo</label>
+                <input type="text" class="form-control" id="ip_equipo" name="ip_equipo">
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="descripcion_equipo" class="form-label">Descripción del Equipo</label>
+            <input type="text" class="form-control" id="descripcion_equipo" name="descripcion_equipo">
+        </div>
+
+        <!-- Ubicación -->
+        <h5 class="mt-4 mb-3">Ubicación</h5>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="extension" class="form-label">Extensión</label>
+                <input type="text" class="form-control" id="extension" name="extension">
+            </div>
+            <div class="col-md-6">
+                <label for="piso" class="form-label">Piso</label>
+                <input type="text" class="form-control" id="piso" name="piso">
+            </div>
+        </div>
+
+        <!-- Detalles del Servicio -->
+        <h5 class="mt-4 mb-3">Detalles del Servicio</h5>
+        <div class="mb-3">
+            <label for="datos_atencion" class="form-label">Datos de Atención</label>
+            <textarea class="form-control" id="datos_atencion" name="datos_atencion" rows="3"></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="comentario_usuario" class="form-label">Comentario del Usuario</label>
+            <textarea class="form-control" id="comentario_usuario" name="comentario_usuario" rows="3"></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="sugerencias" class="form-label">Sugerencias</label>
+            <textarea class="form-control" id="sugerencias" name="sugerencias" rows="2"></textarea>
+        </div>
+
+        <!-- Estado -->
+        <div class="mb-3">
+            <label for="estado_id" class="form-label">Estado del Ticket</label>
+            <select class="form-select" id="estado_id" name="estado_id" required>
+                <option value="">Seleccione Estado</option>
+                {% for e in estadosTicket %}
+                    <option value="{{ e.id }}">{{ e.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+          <!-- Tecnico asigando  -->
+        <div class="mb-3">
+            <label for="tecnicoAsiganado" class="form-label">Seleccione un tecnico</label>
+            <select class="form-select" id="tecnicoAsiganado" name="tecnicoAsiganado" required>
+                <option value="">Seleccione un tecnico</option>
+                {% for s in tecnicoAsignado %}
+                      <option value="{{ s.id }}">{{ s.nombre }} {{ s.apellidoP }} {{ s.apellidoM }}</option>
+                    {% endfor %}
+            </select>
+        </div>
+
+
+        <!-- Evidencia -->
+     <div class="mb-3">
+    <h5>Evidencia</h5>
+
+    <div id="archivo_actual" style="display: none;">
+        <label>Archivo Actual:</label>
+        <a href="#" id="linkArchivo" target="_blank">Descargar Evidencia</a>
+    </div>
+
+    <label for="evidencia" class="form-label">Actualizar Evidencia (opcional)</label>
+    <input class="form-control" type="file" id="evidencia" name="evidencia" accept=".pdf">
+</div>
+
+
+
