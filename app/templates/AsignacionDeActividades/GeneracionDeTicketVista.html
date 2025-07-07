@@ -78,6 +78,7 @@
   <button class="btn btn-warning btn-sm"
     onclick="abrirModalEditar(
         {{ u.id }},
+         '{{ u.numero_ticket }}',
         {{ u.cat_prioridad }},
         '{{ u.asunto }}',
         {{ u.solicitante_id }},
@@ -159,7 +160,7 @@
 
 <script>
 function abrirModalEditar(
-    id, cat_prioridad, asunto, solicitante_id, afectado_id, tema_soporte, area, tipo_falla_id,
+    id,numero_ticket, cat_prioridad, asunto, solicitante_id, afectado_id, tema_soporte, area, tipo_falla_id,
     service_tag, numero_serie, ip_equipo, descripcion_equipo, extension, piso,
     datos_atencion, comentario_usuario, sugerencias, estado_id,evidencia
 ) {
@@ -174,6 +175,7 @@ function abrirModalEditar(
     });
 
     // Llenar los campos del formulario
+     document.querySelector('#modalEditar input[name="numeroTicket"]').value = numero_ticket;
     document.querySelector('#modalEditar select[name="cat_prioridad"]').value = cat_prioridad;
     //document.querySelector('#modalEditar select[name="cat_prioridad"]').value = String(cat_prioridad);
     document.querySelector('#modalEditar input[name="asunto"]').value = asunto;
