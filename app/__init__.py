@@ -17,8 +17,9 @@ migrate = Migrate()
 load_dotenv()
 
 def create_app():
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder="../static")
     app.config.from_object(Config)
+
 
     db.init_app(app)
     login_manager.init_app(app)

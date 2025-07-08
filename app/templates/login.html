@@ -13,7 +13,7 @@
         body {
             margin: 0;
             padding: 0;
-            background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+            background: linear-gradient(135deg, #7B1E3B 0%, #BE3455 100%); /* degradado vino */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -21,24 +21,30 @@
         }
 
         .login-container {
-            background: white;
+            background: #F5F1E3; /* beige */
             padding: 2rem;
             border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-            width: 300px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 320px;
             text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .login-container:hover {
+            transform: translateY(-5px);
         }
 
         .login-container h2 {
             margin-bottom: 1.5rem;
-            color: #333;
+            color: #7B1E3B; /* vino */
         }
 
         .login-container label {
             display: block;
             text-align: left;
-            margin: 0.5rem 0 0.2rem;
+            margin: 0.5rem 0 0.3rem;
             font-weight: 600;
+            color: #333;
         }
 
         .login-container input[type="text"],
@@ -46,38 +52,47 @@
             width: 100%;
             padding: 0.6rem;
             margin-bottom: 1rem;
-            border: 1px solid #ddd;
+            border: 1px solid #ccc;
             border-radius: 10px;
             outline: none;
             transition: border-color 0.3s;
         }
 
         .login-container input:focus {
-            border-color: #f6a;
+            border-color: #7B1E3B;
         }
 
         .login-container button {
-            background-color: #ff8aa6;
-            color: white;
+            background-color: #7B1E3B;
+            color: #fff;
             border: none;
             padding: 0.6rem 1rem;
             border-radius: 10px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            width: 100%;
+            font-weight: 600;
+            transition: background-color 0.3s, transform 0.2s;
         }
 
         .login-container button:hover {
-            background-color: #ff6e91;
+            background-color: #A42448;
+            transform: scale(1.03);
         }
 
         .flash-msg {
-            color: #d33;
+            color: #D8000C;
+            background-color: #FFD2D2;
+            padding: 0.5rem;
+            border-radius: 8px;
             font-size: 0.9rem;
             margin-bottom: 1rem;
         }
 
         .success-msg {
-            color: #28a745;
+            color: #155724;
+            background-color: #D4EDDA;
+            padding: 0.5rem;
+            border-radius: 8px;
             font-size: 0.9rem;
             margin-bottom: 1rem;
         }
@@ -85,7 +100,7 @@
 </head>
 <body>
     <div class="login-container">
-        <h2>Iniciar sesión</h2>
+        <h2>Iniciar Sesión</h2>
 
         {% with messages = get_flashed_messages() %}
           {% if messages %}

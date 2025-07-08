@@ -8,6 +8,15 @@ from sqlalchemy import or_
 from datetime import datetime
 from app.models import Ticket  # Ajusta según tu estructura
 from sqlalchemy import func
+import os
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
+from flask_login import login_required
+from datetime import datetime
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+from reportlab.lib.units import mm
+import pandas as pd
 generacionTicket_bp = Blueprint('generacionTicket', __name__)
 dao = GeneracionTicktDAOImpl()
 
@@ -78,5 +87,85 @@ def crear_reporte():
     dao.crear(nuevo_tiket)
 
     flash('Ticket creado exitosamente', 'success')
+    carpeta = os.path.join('static', 'tickets')
+    os.makedirs(carpeta, exist_ok=True)
 
-    return redirect(url_for('generacionTicket.cargar_catalogos'))
+    ruta_pdf = os.path.join(carpeta, f'Ticket_{numero_ticket_generado}.pdf')
+    ruta_excel = os.path.join(carpeta, f'Ticket_{numero_ticket_generado}.xlsx')
+
+    # Generar PDF tipo ticket
+    from reportlab.lib.pagesizes import letter
+    from reportlab.lib.units import mm
+    from reportlab.pdfgen.canvas import Canvas
+
+    p = canvas.Canvas(ruta_pdf, pagesize=(80 * mm, 300 * mm))  # Ticket de 80mm ancho x 300mm alto
+    p.setFont("Helvetica", 9)
+
+    y = 280 * mm  # Altura inicial
+    line_height = 5 * mm
+
+    # Campos con la información completa
+    campos = {
+        "Número Ticket": nuevo_tiket.numero_ticket,
+        "Asunto": nuevo_tiket.asunto,
+        "Prioridad": nuevo_tiket.cat_prioridad,
+        "Solicitante ID": nuevo_tiket.solicitante_id,
+        "Afectado ID": nuevo_tiket.afectado_id,
+        "Tema de Soporte": nuevo_tiket.tema_soporte,
+        "Área": nuevo_tiket.area,
+        "Tipo de Falla": nuevo_tiket.tipo_falla_id,
+        "Service Tag": nuevo_tiket.service_tag,
+        "Número de Serie": nuevo_tiket.numero_serie,
+        "IP del Equipo": nuevo_tiket.ip_equipo,
+        "Descripción del Equipo": nuevo_tiket.descripcion_equipo,
+        "Extensión": nuevo_tiket.extension,
+        "Piso": nuevo_tiket.piso,
+        "Datos de Atención": nuevo_tiket.datos_atencion,
+        "Comentario del Usuario": nuevo_tiket.comentario_usuario,
+        "Sugerencias": nuevo_tiket.sugerencias,
+        "Fecha de Registro": nuevo_tiket.fecha_registro.strftime('%Y-%m-%d %H:%M:%S')
+    }
+
+    # Título del ticket
+    p.setFont("Helvetica-Bold", 10)
+    p.drawCentredString(40 * mm, y, "📌 TICKET DE SOPORTE")
+    y -= 10 * mm
+    p.line(5 * mm, y, 75 * mm, y)
+    y -= line_height
+
+    p.setFont("Helvetica", 9)
+
+    # Contenido del ticket
+    for campo, valor in campos.items():
+        texto = f"{campo}: {valor}"
+        p.drawString(5 * mm, y, texto)
+        y -= line_height
+        if y < 20 * mm:
+            p.showPage()
+            y = 280 * mm
+            p.setFont("Helvetica", 9)
+
+    # Línea final
+    p.line(5 * mm, y, 75 * mm, y)
+    y -= line_height
+    p.drawCentredString(40 * mm, y, f"Fecha: {datetime.now().strftime('%d/%m/%Y %H:%M')}")
+    p.showPage()
+    p.save()
+
+    # Generar Excel detallado
+    import pandas as pd
+    data_excel = {k: [v] for k, v in campos.items()}
+    df = pd.DataFrame(data_excel)
+    df.to_excel(ruta_excel, index=False)
+
+    # URLs para descargar
+    pdf_url = url_for('static', filename=f'tickets/Ticket_{numero_ticket_generado}.pdf')
+    excel_url = url_for('static', filename=f'tickets/Ticket_{numero_ticket_generado}.xlsx')
+
+    # Imprimir rutas en consola
+    print("Ruta absoluta PDF:", os.path.abspath(ruta_pdf))
+    print("Ruta absoluta Excel:", os.path.abspath(ruta_excel))
+    print("URL PDF:", pdf_url)
+    print("URL Excel:", excel_url)
+
+    return jsonify({'success': True, 'pdf_url': pdf_url, 'excel_url': excel_url})
