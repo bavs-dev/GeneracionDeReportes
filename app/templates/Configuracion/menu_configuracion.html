@@ -1,0 +1,38 @@
+{% extends "dashboard_base.html" %}
+
+{% block title %}Menú de Configuración{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">⚙️ Panel de Configuración</h2>
+    <div class="row g-4">
+
+        <div class="col-md-4">
+            <a href="#" class="text-decoration-none">
+                <div class="card text-center shadow h-100">
+                    <div class="card-body">
+                        <i class="fas fa-building fa-3x mb-2 text-primary"></i>
+                        <h5 class="card-title">Catálogo de Pisos</h5>
+                        <p class="card-text">Gestiona los pisos del sistema.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-4">
+            <a href="#" class="text-decoration-none">
+                <div class="card text-center shadow h-100">
+                    <div class="card-body">
+                        <i class="fas fa-sitemap fa-3x mb-2 text-success"></i>
+                        <h5 class="card-title">Catálogo de Áreas</h5>
+                        <p class="card-text">Administra las áreas disponibles.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Puedes agregar más tarjetas similares aquí -->
+
+    </div>
+</div>
+{% endblock %}
