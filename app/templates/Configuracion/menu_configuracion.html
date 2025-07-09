@@ -7,20 +7,22 @@
     <h2 class="mb-4">⚙️ Panel de Configuración</h2>
     <div class="row g-4">
 
+        <!-- Tarjeta: Temas de Soporte -->
         <div class="col-md-4">
-            <a href="#" class="text-decoration-none">
+            <a href="{{ url_for('catalogos.vista_temas') }}" class="text-decoration-none">
                 <div class="card text-center shadow h-100">
                     <div class="card-body">
                         <i class="fas fa-building fa-3x mb-2 text-primary"></i>
-                        <h5 class="card-title">Catálogo de Pisos</h5>
-                        <p class="card-text">Gestiona los pisos del sistema.</p>
+                        <h5 class="card-title">Catálogo de Tipo de fallas</h5>
+                        <p class="card-text">Gestiona los tipos de falla.</p>
                     </div>
                 </div>
             </a>
         </div>
 
+        <!-- Tarjeta: Áreas -->
         <div class="col-md-4">
-            <a href="#" class="text-decoration-none">
+            <a href="{{ url_for('catalogos.vista_areas') }}" class="text-decoration-none">
                 <div class="card text-center shadow h-100">
                     <div class="card-body">
                         <i class="fas fa-sitemap fa-3x mb-2 text-success"></i>
@@ -30,8 +32,6 @@
                 </div>
             </a>
         </div>
-
-        <!-- Puedes agregar más tarjetas similares aquí -->
 
     </div>
 </div>

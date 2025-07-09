@@ -95,10 +95,11 @@
 
                 <td>{{ u.asunto }}</td>
 
-                <td>
+             <td class="text-center">
+                 <div class="d-flex gap-2">
 
- {% if current_user.rol_id == 3 %}
- <button class="btn btn-warning btn-sm"
+{% if current_user.rol_id == 2 or current_user.rol_id == 3 %}
+ <button class="btn btn-warning btn-sm me-1"
     onclick="abrirModalEditar(
         {{ u.id }},
          '{{ u.numero_ticket }}',
@@ -128,7 +129,7 @@
 {% endif %}
 
 
-                     <button class="btn btn-success btn-sm"
+                     <button class="btn btn-success btn-sm me-1"
 
     onclick="abrirModalEditarDetalles(
         {{ u.id }},
@@ -159,12 +160,12 @@
 </button>
 
 
-                    <!--
-                    <form action="{{ url_for('usuarios.eliminar_usuario', id=u.id) }}" method="post" style="display:inline;" onsubmit="return confirmarEliminacion(this)">
+{% if current_user.rol_id == 2 or current_user.rol_id == 3 %}
+                    <form action="{{ url_for('reporteTicket.eliminar_tiket', id=u.id) }}" method="post" style="display:inline;" onsubmit="return confirmarEliminacion(this)">
                         <button type="submit" class="btn btn-danger btn-sm" title="Eliminar"><i class="fas fa-trash-alt"></i></button>
                     </form>
-                    -->
-
+{% endif %}
+</div>
                 </td>
             </tr>
         {% endfor %}

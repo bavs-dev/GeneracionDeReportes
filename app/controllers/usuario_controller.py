@@ -2,6 +2,8 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from app.dao.daoImpl.usuario_dao_impl import UsuarioDAOImpl
 from app.models.usuario import Usuario, Departamento, Rol
 from flask_login import login_user, logout_user, login_required, current_user
+from sqlalchemy.exc import IntegrityError
+from app import db  # <-- Ajusta si está en otro módulo o carpeta
 usuario_bp = Blueprint('usuarios', __name__)
 dao = UsuarioDAOImpl()
 
@@ -58,6 +60,13 @@ def editar_usuario(id):
 @usuario_bp.route('/usuarios/eliminar/<int:id>', methods=['POST'])
 @login_required
 def eliminar_usuario(id):
-    dao.eliminar(id)
-    flash('Usuario eliminado', 'success')
+    try:
+        dao.eliminar(id)
+        flash('Usuario eliminado', 'success')
+    except IntegrityError as e:
+        db.session.rollback()
+        if 'FK_Tecnico' in str(e.orig):  # Puedes cambiarlo según el nombre real de tu FK
+            flash('No puedes eliminar este usuario porque tiene reportes creados.', 'danger')
+        else:
+            flash('No se pudo eliminar el usuario por un error de integridad.', 'danger')
     return redirect(url_for('usuarios.listar_usuarios'))

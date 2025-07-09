@@ -200,18 +200,21 @@
             <i class="bi bi-plus-square"></i> Levantar Ticket
           </a>
         </li>
-         {% if usuario.rol_id == 2 %}
+         {% if usuario.rol_id == 2 or usuario.rol_id == 3 %}
+
         <li class="nav-item mb-2">
           <a class="nav-link" href="{{ url_for('generacionTicketVista.listar_tickets') }}">
             <i class="bi bi-journal-check"></i> Asignación de actividades
           </a>
         </li>
         {% endif %}
+           {% if usuario.rol_id == 2 or usuario.rol_id == 3 %}
         <li class="nav-item mb-2">
           <a class="nav-link"  href="{{ url_for('menu_configuracion.menu_configuracion') }}">
             <i class="bi bi-gear"></i> Configuración
           </a>
         </li>
+            {% endif %}
       </ul>
     </div>
 

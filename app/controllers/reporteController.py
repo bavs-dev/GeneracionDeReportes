@@ -216,3 +216,15 @@ def descargar_evidencias(id):
         as_attachment=True,
         download_name=f"evidencia_ticket_{id}.pdf"
     )
+
+
+
+@reporteTicket_bp.route('/ticketsEliminar/eliminar/<int:id>', methods=['POST'])
+@login_required
+def eliminar_tiket(id):
+    try:
+        dao.eliminar(id)
+        flash(' Ticket eliminado correctamente.', 'success')  # Mensaje verde
+    except Exception as e:
+        flash(f' Error al eliminar el ticket: {str(e)}', 'danger')  # Mensaje rojo
+    return redirect(url_for('reporteTicket.listar_tickets'))
