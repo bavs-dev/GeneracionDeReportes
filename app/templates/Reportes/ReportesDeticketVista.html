@@ -195,7 +195,7 @@
 <!-- Modal Editar -->
 <div class="modal fade" id="modalEditar" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-lg"> <!-- Clase para agrandar el modal -->
-    <form class="modal-content" enctype="multipart/form-data" id="formEditar" method="post" onsubmit="return confirmarAccion('editar', event)">
+    <form class="modal-content" enctype="multipart/form-data" id="formEditar" method="post" >
 
       <div class="modal-header">
         <h5 class="modal-title">Editar Ticket</h5>
@@ -411,6 +411,68 @@ $(document).ready(function() {
         });
     });
 });
+
+    document.getElementById('formEditar').addEventListener('submit', async function(e) {
+    e.preventDefault(); // Evitar envío normal
+
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: 'Se actualizará el ticket y se descargarán los archivos generados.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, actualizar',
+        cancelButtonText: 'Cancelar'
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            const form = e.target;
+            const formData = new FormData(form);
+            const action = form.getAttribute('action');
+
+            try {
+                const response = await fetch(action, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Descargar PDF
+                    const linkPDF = document.createElement('a');
+                    linkPDF.href = result.pdf_url;
+                    linkPDF.download = '';
+                    linkPDF.click();
+
+                    // Descargar Excel
+                    const linkExcel = document.createElement('a');
+                    linkExcel.href = result.excel_url;
+                    linkExcel.download = '';
+                    linkExcel.click();
+
+                    // Cerrar el modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('modalEditar'));
+                    modal.hide();
+
+                    // Mostrar éxito
+                    Swal.fire('¡Actualizado!', 'El ticket fue actualizado correctamente.', 'success');
+
+                    // Recargar página después de unos segundos
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    Swal.fire('Error', 'No se pudo actualizar el ticket.', 'error');
+                }
+
+            } catch (err) {
+                console.error('Error:', err);
+                Swal.fire('Error', 'Hubo un problema al procesar la solicitud.', 'error');
+            }
+        }
+    });
+});
+
+
 </script>
 
 
