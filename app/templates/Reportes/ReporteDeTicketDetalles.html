@@ -4,6 +4,8 @@
 <div class="row mb-3">
     <div class="col-md-4">
         <label for="estado_id" class="form-label">Estado del Ticket</label>
+
+
         <select class="form-select" id="estado_id" name="estado_id" disabled>
             <option value="">Seleccione Estado</option>
             {% for e in estadosTicket %}
@@ -24,9 +26,9 @@
 
     <div class="col-md-4">
         <h6 class="form-label">Evidencia</h6>
-        <div id="archivo_actual" style="display: none;">
+        <div id="archivo_actual_detalles" style="display: none;">
             <label>Archivo Actual:</label>
-            <a href="#" id="linkArchivo" target="_blank">Descargar Evidencia</a>
+            <a href="#" id="linkArchivo_detalles" target="_blank">Descargar Evidencia</a>
         </div>
     </div>
 </div>

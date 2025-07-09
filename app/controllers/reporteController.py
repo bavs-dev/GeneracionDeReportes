@@ -202,3 +202,17 @@ def descargar_evidencia(id):
     )
 
 
+
+@reporteTicket_bp.route('/reporteTicket/descargar_evidencias/<int:id>')
+@login_required
+def descargar_evidencias(id):
+    ticket = Ticket.query.get(id)
+    if not ticket or not ticket.evidencia:
+        return "Archivo no encontrado", 404
+
+    return send_file(
+        io.BytesIO(ticket.evidencia),
+        mimetype='application/octet-stream',
+        as_attachment=True,
+        download_name=f"evidencia_ticket_{id}.pdf"
+    )
