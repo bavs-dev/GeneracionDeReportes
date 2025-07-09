@@ -41,6 +41,7 @@ def create_app():
     from app.controllers.usuario_controller import usuario_bp  # Importa el Blueprint
     from app.controllers.generacion_ticket_controller import  generacionTicket_bp # importamos el Blueprint
     from app.controllers.generacionDeTicketVistaController import generacionTicketVista_bp
+    from app.controllers.reporteController import reporteTicket_bp
     from flask_login import current_user
 
     app.register_blueprint(auth)
@@ -48,6 +49,7 @@ def create_app():
     app.register_blueprint(usuario_bp)  # REGISTRO DEL CRUD DE USUARIOS
     app.register_blueprint(generacionTicket_bp) #
     app.register_blueprint(generacionTicketVista_bp)
+    app.register_blueprint(reporteTicket_bp)
     # Inyectar automáticamente 'usuario' en todas las plantillas
     @app.context_processor
     def inyectar_usuario():

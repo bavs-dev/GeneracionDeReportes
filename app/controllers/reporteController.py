@@ -9,20 +9,26 @@ from datetime import datetime
 from app.models import Ticket  # Ajusta según tu estructura
 from sqlalchemy import func
 from flask import send_file, make_response
+from flask_login import current_user
+
+
 import io
 
-generacionTicketVista_bp = Blueprint('generacionTicketVista', __name__)
+reporteTicket_bp = Blueprint('reporteTicket', __name__)
 dao = GeneracionTicktDAOImpl()
 
-@generacionTicketVista_bp.route('/GeneracionTicktVista')
+@reporteTicket_bp.route('/reporteTicket')
 @login_required
 def listar_tickets():
     #consulta de tickets
     prioridad = CatPrioridad.query.all()
+    usuario_id = current_user.id
 
     listTickets = Ticket.query.filter(
-        Ticket.tecnico_asignado_id.is_(None)
+        Ticket.solicitante_id == current_user.id,
+        Ticket.tecnico_asignado_id.isnot(None)
     ).all()
+
     solicitante = Usuario.query.filter(
         or_(
             Usuario.rol_id == 1,
@@ -42,10 +48,12 @@ def listar_tickets():
     ).all()
 
 
-    return render_template('AsignacionDeActividades/GeneracionDeTicketVista.html',listTickets=listTickets,prioridad=prioridad,solicitante=solicitante,area=area, tiposDeFalla=tiposDeFalla, estadosTicket=estadosTicket,tecnicoAsignado=tecnicoAsignado)
+
+    return render_template('Reportes/ReportesDeticketVista.html',listTickets=listTickets,prioridad=prioridad,solicitante=solicitante,area=area, tiposDeFalla=tiposDeFalla, estadosTicket=estadosTicket,tecnicoAsignado=tecnicoAsignado,
+    current_user=current_user)
 
 
-@generacionTicketVista_bp.route('/generacionTicketVista/actualizar_ticket/<int:id>', methods=['POST'])
+@reporteTicket_bp.route('/reporteTicket/actualizar_ticket/<int:id>', methods=['POST'])
 @login_required
 def actualizar_ticket(id):
 
@@ -85,7 +93,7 @@ def actualizar_ticket(id):
     return redirect(url_for('generacionTicketVista.listar_tickets'))
 
 
-@generacionTicketVista_bp.route('/generacionTicketVista/descargar_evidencia/<int:id>')
+@reporteTicket_bp.route('/reporteTicket/descargar_evidencia/<int:id>')
 @login_required
 def descargar_evidencia(id):
     ticket = Ticket.query.get(id)

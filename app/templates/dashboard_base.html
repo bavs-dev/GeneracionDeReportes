@@ -169,7 +169,7 @@
 
       <div class="user-info">
         <i class="bi bi-person-circle"></i>
-        <span>{{ usuario.usuario }}</span>
+        <span>{{ usuario.nombre }} {{ usuario.apellidoP }} {{ usuario.apellidoM }}</span>
         <a class="btn btn-outline-danger btn-sm" href="{{ url_for('auth.logout') }}">
           Cerrar sesión
         </a>
@@ -189,7 +189,7 @@
           </a>
         </li>
         <li class="nav-item mb-2">
-          <a class="nav-link" href="{{ url_for('generacionTicket.cargar_catalogos') }}">
+          <a class="nav-link" href="{{ url_for('reporteTicket.listar_tickets') }}">
             <i class="bi bi-card-list"></i> Tickets / Reportes
           </a>
         </li>

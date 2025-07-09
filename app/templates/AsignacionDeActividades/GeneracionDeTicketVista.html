@@ -15,7 +15,7 @@
 
 
 <div class="container mt-4">
-    <h2>Tickets Generados</h2>
+    <h2>Asignación de actividades</h2>
 
 
     <!-- Buscador Global -->
@@ -75,6 +75,8 @@
                 <td>{{ u.tema_soporte }}</td>
                 <td>{{ u.solicitante.nombre }} {{ u.solicitante.apellidoP }} {{ u.solicitante.apellidoM }}</td>
                 <td>
+
+
   <button class="btn btn-warning btn-sm"
     onclick="abrirModalEditar(
         {{ u.id }},
@@ -101,6 +103,9 @@
 >
     <i class="fas fa-edit"></i>
 </button>
+
+
+
 
 
 

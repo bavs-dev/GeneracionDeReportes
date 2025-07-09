@@ -1,3 +1,5 @@
+from sqlalchemy.orm import backref
+
 from app import db
 from datetime import datetime
 
@@ -39,6 +41,7 @@ class Ticket(db.Model):
     cat_calidad_id = db.Column(db.Integer, db.ForeignKey('cat_calidad.id'), nullable=True)
     # Relación hacia la tabla CatPrioridad
     prioridad = db.relationship('CatPrioridad', backref='tickets')
+    estadosTicketid = db.relationship('EstadosTicket', foreign_keys=[estado_id])
 
 
     solicitante = db.relationship('Usuario', foreign_keys=[solicitante_id])

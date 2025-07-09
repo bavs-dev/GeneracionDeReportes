@@ -15,7 +15,7 @@
 
 
 <div class="container mt-4">
-    <h2>Tickets Generados</h2>
+    <h2>Mis tickets generados</h2>
 
 
     <!-- Buscador Global -->
@@ -32,38 +32,72 @@
 
 
 
-    <table id="tablaUsuarios" class="table table-bordered">
+    <table id="tablaUsuarios" class="table table-bordered text-center">
         <thead>
             <tr>
+                <th>Estado</th>
                 <th>Numero de Ticket</th>
                 <th>Fecha de Registro</th>
                 <th>Prioridad</th>
                 <th>Asunto</th>
                 <th>Tema de soporte</th>
-                <th>Solicitante</th>
+
                 <th>Acciones</th>
             </tr>
             <!-- Filtros individuales -->
             <tr>
+                <th><input type="text" class="form-control form-control-sm" placeholder="Filtrar Estado"></th>
                 <th><input type="text" class="form-control form-control-sm" placeholder="Filtrar Numero"></th>
                 <th><input type="text" class="form-control form-control-sm" placeholder="Filtrar Fecha"></th>
                 <th><input type="text" class="form-control form-control-sm" placeholder="Filtrar Prioridad"></th>
                 <th><input type="text" class="form-control form-control-sm" placeholder="Filtrar Asunto"></th>
                 <th><input type="text" class="form-control form-control-sm" placeholder="Filtrar Tema"></th>
-                <th><input type="text" class="form-control form-control-sm" placeholder="Filtrar Solicitante"></th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
         {% for u in listTickets %}
             <tr>
+
+                <td>
+    {% if u.estadosTicketid.nombre == 'Abierto' %}
+        <span class="badge bg-primary">{{ u.estadosTicketid.nombre }}</span>
+    {% elif u.estadosTicketid.nombre == 'En Proceso' %}
+        <span class="badge bg-warning text-dark">{{ u.estadosTicketid.nombre }}</span>
+    {% elif u.estadosTicketid.nombre == 'En Espera' %}
+        <span class="badge bg-info text-dark">{{ u.estadosTicketid.nombre }}</span>
+    {% elif u.estadosTicketid.nombre == 'Resuelto' %}
+        <span class="badge bg-success">{{ u.estadosTicketid.nombre }}</span>
+    {% elif u.estadosTicketid.nombre == 'Cerrado' %}
+        <span class="badge bg-secondary">{{ u.estadosTicketid.nombre }}</span>
+    {% elif u.estadosTicketid.nombre == 'Cancelado' %}
+        <span class="badge bg-danger">{{ u.estadosTicketid.nombre }}</span>
+    {% else %}
+        <span class="badge bg-light text-dark">{{ u.estadosTicketid.nombre }}</span>
+    {% endif %}
+</td>
+
+
                 <td>{{ u.numero_ticket }}</td>
                 <td>{{ u.fecha_registro }}</td>
-                <td>{{ u.prioridad.nombre}}</td>
+
+                 <td>
+            {% if u.prioridad.nombre == 'Baja' %}
+                <span class="badge bg-primary">{{ u.prioridad.nombre }}</span>
+            {% elif u.prioridad.nombre == 'Media' %}
+                <span class="badge bg-warning text-dark">{{ u.prioridad.nombre }}</span>
+            {% elif u.prioridad.nombre == 'Alta' %}
+                <span class="badge bg-danger">{{ u.prioridad.nombre }}</span>
+            {% else %}
+                <span class="badge bg-secondary">{{ u.prioridad.nombre }}</span>
+            {% endif %}
+        </td>
+
                 <td>{{ u.asunto }}</td>
-                <td>{{ u.tema_sopore }}</td>
-                <td>{{ u.solicitante_id }}</td>
+                 <td>{{ u.tema_soporte }}</td>
                 <td>
+
+   {% if current_user.rol_id == 3 %}
   <button class="btn btn-warning btn-sm"
     onclick="abrirModalEditar(
         {{ u.id }},
@@ -89,13 +123,41 @@
 >
     <i class="fas fa-edit"></i>
 </button>
+{% endif %}
+<button class="btn btn-success btn-sm"
+    onclick="abrirModalEditarDetalles(
+        {{ u.id }},
+        {{ u.cat_prioridad }},
+        '{{ u.asunto }}',
+        {{ u.solicitante_id }},
+        {{ u.afectado_id }},
+        '{{ u.tema_soporte }}',
+        {{ u.area }},
+        {{ u.tipo_falla_id }},
+        '{{ u.service_tag }}',
+        '{{ u.numero_serie }}',
+        '{{ u.ip_equipo }}',
+        '{{ u.descripcion_equipo }}',
+        '{{ u.extension }}',
+        '{{ u.piso }}',
+        '{{ u.datos_atencion }}',
+        '{{ u.comentario_usuario }}',
+        '{{ u.sugerencias }}',
+        {{ u.estado_id }},
+         '{{ u.numero_ticket }}',
+           {{ u.tecnico_asignado_id }},
+            {{ 'true' if u.evidencia else 'false' }}
+    )"
+>
+    <i class="fas fa-eye"></i>
+</button>
 
-
-
-
+                    <!--
                     <form action="{{ url_for('usuarios.eliminar_usuario', id=u.id) }}" method="post" style="display:inline;" onsubmit="return confirmarEliminacion(this)">
                         <button type="submit" class="btn btn-danger btn-sm" title="Eliminar"><i class="fas fa-trash-alt"></i></button>
                     </form>
+                    -->
+
                 </td>
             </tr>
         {% endfor %}
@@ -133,7 +195,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
-        {% include 'AsignacionDeActividades/GeneracionDeTicketEdicionAsignacion.html' %}
+        {% include 'Reportes/ReporteVistaFormulario.html' %}
       </div>
       <div class="modal-footer">
         <button type="submit" class="btn btn-primary">Actualizar</button>
@@ -142,6 +204,31 @@
     </form>
   </div>
 </div>
+
+
+
+<div class="modal fade" id="modalEditarDetalles" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg"> <!-- Clase para agrandar el modal -->
+    <form class="modal-content" enctype="multipart/form-data" id="formEditarDetalles" method="post" onsubmit="return confirmarAccion('editar', event)">
+
+      <div class="modal-header">
+       <h5 class="modal-title">Detalles del Ticket</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+         {% include 'Reportes/ReporteDeTicketDetalles.html' %}
+      </div>
+
+      <div class="modal-footer">
+
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
 
 <script>
 function abrirModalEditar(
@@ -185,7 +272,7 @@ function abrirModalEditar(
     if (evidencia === true || evidencia === 'true') {
         document.getElementById('archivo_actual').style.display = 'block';
         document.getElementById('linkArchivo').href = `/generacionTicketVista/descargar_evidencia/${id}`;
-        console.log("Sí hay evidencia");
+        console.log("Sí hay evidencia /generacionTicketVista/descargar_evidencia/${id}");
     } else {
         document.getElementById('archivo_actual').style.display = 'none';
         console.log("No hay evidencia");
@@ -195,7 +282,60 @@ function abrirModalEditar(
     new bootstrap.Modal(document.getElementById('modalEditar')).show();
 }
 
+function abrirModalEditarDetalles(
+    id, cat_prioridad, asunto, solicitante_id, afectado_id, tema_soporte, area, tipo_falla_id,
+    service_tag, numero_serie, ip_equipo, descripcion_equipo, extension, piso,
+    datos_atencion, comentario_usuario, sugerencias, estado_id,numero_ticket,tecnico_asignado_id,evidencia
+) {
+    // Debug para verificar valores
+    console.log({
+        cat_prioridad,
+        solicitante_id,
+        afectado_id,
+        area,
+        tipo_falla_id,
+        estado_id
+    });
 
+    // Llenar los campos del formulario
+    document.querySelector('#modalEditarDetalles select[name="cat_prioridad"]').value = cat_prioridad;
+    //document.querySelector('#modalEditarDetalles select[name="cat_prioridad"]').value = String(cat_prioridad);
+    document.querySelector('#modalEditarDetalles input[name="asunto"]').value = asunto;
+    document.querySelector('#modalEditarDetalles select[name="solicitante_id"]').value = solicitante_id;
+    document.querySelector('#modalEditarDetalles select[name="afectado_id"]').value = afectado_id;
+    document.querySelector('#modalEditarDetalles input[name="tema_soporte"]').value = tema_soporte;
+    document.querySelector('#modalEditarDetalles select[name="area"]').value = area;
+    document.querySelector('#modalEditarDetalles select[name="tipo_falla_id"]').value = tipo_falla_id;
+    document.querySelector('#modalEditarDetalles input[name="service_tag"]').value = service_tag;
+    document.querySelector('#modalEditarDetalles input[name="numero_serie"]').value = numero_serie;
+    document.querySelector('#modalEditarDetalles input[name="ip_equipo"]').value = ip_equipo;
+    document.querySelector('#modalEditarDetalles input[name="descripcion_equipo"]').value = descripcion_equipo;
+    document.querySelector('#modalEditarDetalles input[name="extension"]').value = extension;
+    document.querySelector('#modalEditarDetalles input[name="piso"]').value = piso;
+    document.querySelector('#modalEditarDetalles textarea[name="datos_atencion"]').value = datos_atencion;
+    document.querySelector('#modalEditarDetalles textarea[name="comentario_usuario"]').value = comentario_usuario;
+    document.querySelector('#modalEditarDetalles textarea[name="sugerencias"]').value = sugerencias;
+    document.querySelector('#modalEditarDetalles select[name="estado_id"]').value = estado_id;
+    document.querySelector('#modalEditarDetalles input[name="numeroTicket"]').value = numero_ticket;
+    document.querySelector('#modalEditarDetalles select[name="tecnicoAsiganado"]').value = tecnico_asignado_id;
+
+
+    // Configurar acción del formulario
+
+  console.log("Link generado:", `/reporteTicket/descargar_evidencia/${id}`);
+
+    if (evidencia === true || evidencia === 'true') {
+        document.getElementById('archivo_actual').style.display = 'block';
+        document.getElementById('linkArchivo').href = `/reporteTicket/descargar_evidencia/${id}`;
+        console.log("Sí hay evidencia");
+    } else {
+        document.getElementById('archivo_actual').style.display = 'none';
+        console.log("No hay evidencia");
+    }
+
+    // Mostrar el modal
+    new bootstrap.Modal(document.getElementById('modalEditarDetalles')).show();
+}
 
 function confirmarAccion(accion, e) {
     e.preventDefault();
