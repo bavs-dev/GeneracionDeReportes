@@ -169,7 +169,7 @@
 
       <div class="user-info">
         <i class="bi bi-person-circle"></i>
-        <span>{{ usuario.nombre }} {{ usuario.apellidoP }} {{ usuario.apellidoM }}</span>
+        <span>{{ usuario.nombre }} {{ usuario.apellidoP }} {{ usuario.apellidoM }} {{ usuario.rol_id.nombre }} </span>
         <a class="btn btn-outline-danger btn-sm" href="{{ url_for('auth.logout') }}">
           Cerrar sesión
         </a>

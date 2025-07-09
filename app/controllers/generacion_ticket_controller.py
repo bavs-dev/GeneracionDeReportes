@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from app.dao.daoImpl.generacion_ticket_dao_impl import  GeneracionTicktDAOImpl
 from app.models.ticket_models import  Ticket,ComentarioTicket,HistorialEstadosTicket
 from app.models.usuario import  Usuario
-from app.models.catalogos_models import  EstadosTicket,CatCalidad,CatPrioridad,CatTemaSoporte,TiposFalla,cat_area
+from app.models.catalogos_models import  EstadosTicket,CatCalidad,CatPrioridad,CatTemaSoporte,TiposFalla,cat_area,Piso
 from flask_login import login_user, logout_user, login_required, current_user
 from sqlalchemy import or_
 from datetime import datetime
@@ -13,6 +13,8 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from flask_login import login_required
 from datetime import datetime
 from reportlab.pdfgen import canvas
+from app import db  # <-- Ajusta si está en otro módulo o carpeta
+
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
 from reportlab.lib.units import mm
@@ -39,8 +41,9 @@ def cargar_catalogos():
     area = cat_area.query.all()
 
     tiposDeFalla = TiposFalla.query.all()
+    piso_rel= Piso.query.all()
 
-    return render_template('Ticket/GeneracionDeTicket.html', prioridad=prioridad, solicitante=solicitante,area=area,tiposDeFalla=tiposDeFalla)
+    return render_template('Ticket/GeneracionDeTicket.html', prioridad=prioridad, solicitante=solicitante,area=area,tiposDeFalla=tiposDeFalla,piso=piso_rel)
 
 def generar_numero_ticket():
     hoy = datetime.now().strftime('%Y%m%d')  # Ejemplo: 20240705
@@ -66,17 +69,17 @@ def crear_reporte():
         numero_ticket=numero_ticket_generado,
         cat_prioridad=int(request.form['cat_prioridad']),
         asunto=request.form['asunto'],
-        solicitante_id=int(request.form['solicitante_id']),
-        afectado_id=int(request.form['afectado_id']),
-        tema_soporte=request.form['tema_soporte'],
+        solicitante_id=request.form['solicitante_id'],
+        afectado_id=request.form['afectado_id'],
+
         area=int(request.form['area']),
         tipo_falla_id=int(request.form['tipo_falla_id']),
         service_tag=request.form['service_tag'],
         numero_serie=request.form['numero_serie'],
         ip_equipo=request.form['ip_equipo'],
-        descripcion_equipo=request.form['descripcion_equipo'],
+
         extension=request.form['extension'],
-        piso=request.form['piso'],
+        piso=int(request.form['piso']),
         datos_atencion=request.form['datos_atencion'],
         comentario_usuario=request.form['comentario_usuario'],
         sugerencias=request.form['sugerencias'],
@@ -85,6 +88,10 @@ def crear_reporte():
     )
 
     dao.crear(nuevo_tiket)
+    prioridad = db.session.query(CatPrioridad).filter_by(id=nuevo_tiket.cat_prioridad).first()
+    tipo_falla = db.session.query(TiposFalla).filter_by(id=nuevo_tiket.tipo_falla_id).first()
+    piso = db.session.query(Piso).filter_by(id=nuevo_tiket.piso).first()
+    area = db.session.query(cat_area).filter_by(id=nuevo_tiket.area).first()
 
     flash('Ticket creado exitosamente', 'success')
     carpeta = os.path.join('static', 'tickets')
@@ -98,7 +105,7 @@ def crear_reporte():
     from reportlab.lib.units import mm
     from reportlab.pdfgen.canvas import Canvas
 
-    p = canvas.Canvas(ruta_pdf, pagesize=(80 * mm, 300 * mm))  # Ticket de 80mm ancho x 300mm alto
+    p = canvas.Canvas(ruta_pdf, pagesize=(100 * mm, 300 * mm))  # Ticket de 80mm ancho x 300mm alto
     p.setFont("Helvetica", 9)
 
     y = 280 * mm  # Altura inicial
@@ -108,18 +115,16 @@ def crear_reporte():
     campos = {
         "Número Ticket": nuevo_tiket.numero_ticket,
         "Asunto": nuevo_tiket.asunto,
-        "Prioridad": nuevo_tiket.cat_prioridad,
-        "Solicitante ID": nuevo_tiket.solicitante_id,
-        "Afectado ID": nuevo_tiket.afectado_id,
-        "Tema de Soporte": nuevo_tiket.tema_soporte,
-        "Área": nuevo_tiket.area,
-        "Tipo de Falla": nuevo_tiket.tipo_falla_id,
+        "Prioridad": prioridad.nombre if prioridad else "Desconocido",
+        "Solicitante": nuevo_tiket.solicitante_id,
+        "Afectado": nuevo_tiket.afectado_id,
+        "Área": area.nombre,
+        "Tipo de Falla": tipo_falla.nombre if tipo_falla else "Desconocido",
         "Service Tag": nuevo_tiket.service_tag,
         "Número de Serie": nuevo_tiket.numero_serie,
         "IP del Equipo": nuevo_tiket.ip_equipo,
-        "Descripción del Equipo": nuevo_tiket.descripcion_equipo,
         "Extensión": nuevo_tiket.extension,
-        "Piso": nuevo_tiket.piso,
+        "Piso": piso.nombre if piso else "Desconocido",
         "Datos de Atención": nuevo_tiket.datos_atencion,
         "Comentario del Usuario": nuevo_tiket.comentario_usuario,
         "Sugerencias": nuevo_tiket.sugerencias,

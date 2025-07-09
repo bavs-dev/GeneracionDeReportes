@@ -39,3 +39,10 @@ class cat_area(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(50), unique=True, nullable=False)
     verificador = db.Column(db.String(50), nullable=False)
+
+
+class Piso(db.Model):
+    __tablename__ = 'piso'
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(50), unique=True, nullable=False)
+    verificador = db.Column(db.String(50), nullable=False)

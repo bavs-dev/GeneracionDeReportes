@@ -54,7 +54,7 @@ def actualizar_ticket(id):
 
     if ticket:
 
-        ticket.estado_id = request.form['estado_id']
+        ticket.estado_id = 2
         ticket.tecnico_asignado_id = request.form['tecnicoAsiganado']
         ticket.fecha_ultima_actualizacion =datetime.now()  # Fecha actual
 

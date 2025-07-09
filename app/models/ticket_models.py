@@ -12,16 +12,20 @@ class Ticket(db.Model):
     cat_prioridad = db.Column(db.Integer, db.ForeignKey('cat_prioridad.id'), nullable=False)
     asunto = db.Column(db.String(255), nullable=False)
 
-    solicitante_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
-    afectado_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
+    solicitante_id  = db.Column(db.String(255), nullable=False)
+    afectado_id  = db.Column(db.String(255), nullable=False)
     tecnico_asignado_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=True)
 
-    tema_soporte = db.Column(db.String(255))
+
 
     area = db.Column(db.Integer, db.ForeignKey('cat_area.id'), nullable=True)
 
     extension = db.Column(db.String(50))
-    piso = db.Column(db.String(50))
+    piso = db.Column(db.Integer, db.ForeignKey('piso.id'), nullable=True)
+    piso = db.Column(db.Integer, db.ForeignKey('piso.id'), nullable=False)
+
+
+
     datos_atencion = db.Column(db.Text)
     comentario_usuario = db.Column(db.Text)
     sugerencias = db.Column(db.Text)
@@ -30,7 +34,7 @@ class Ticket(db.Model):
     service_tag = db.Column(db.String(100))
     numero_serie = db.Column(db.String(100))
     ip_equipo = db.Column(db.String(100))
-    descripcion_equipo = db.Column(db.String(255))
+
 
     evidencia = db.Column(db.LargeBinary, nullable=True)
 
@@ -42,10 +46,8 @@ class Ticket(db.Model):
     # Relación hacia la tabla CatPrioridad
     prioridad = db.relationship('CatPrioridad', backref='tickets')
     estadosTicketid = db.relationship('EstadosTicket', foreign_keys=[estado_id])
+    piso_rel = db.relationship('Piso', backref='tickets')
 
-
-    solicitante = db.relationship('Usuario', foreign_keys=[solicitante_id])
-    afectado = db.relationship('Usuario', foreign_keys=[afectado_id])
     tecnico_asignado = db.relationship('Usuario', foreign_keys=[tecnico_asignado_id])
 
 
