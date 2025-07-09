@@ -169,7 +169,7 @@
 
       <div class="user-info">
         <i class="bi bi-person-circle"></i>
-        <span>{{ usuario.nombre }} {{ usuario.apellidoP }} {{ usuario.apellidoM }} {{ usuario.rol_id.nombre }} </span>
+        <span>{{ usuario.nombre }} {{ usuario.apellidoP }} {{ usuario.apellidoM }} ({{ usuario.rol.nombre }}) </span>
         <a class="btn btn-outline-danger btn-sm" href="{{ url_for('auth.logout') }}">
           Cerrar sesión
         </a>
@@ -183,11 +183,13 @@
     <!-- SIDEBAR -->
     <div class="sidebar" id="sidebar">
       <ul class="nav flex-column">
+        {% if usuario.rol_id == 2 %} <!--solo admin-->
         <li class="nav-item mb-2">
           <a class="nav-link" href="{{ url_for('usuarios.listar_usuarios') }}">
             <i class="bi bi-people"></i> Gestión de Usuarios
           </a>
         </li>
+        {% endif %}
         <li class="nav-item mb-2">
           <a class="nav-link" href="{{ url_for('reporteTicket.listar_tickets') }}">
             <i class="bi bi-card-list"></i> Tickets / Reportes
@@ -198,11 +200,13 @@
             <i class="bi bi-plus-square"></i> Levantar Ticket
           </a>
         </li>
+         {% if usuario.rol_id == 2 %}
         <li class="nav-item mb-2">
           <a class="nav-link" href="{{ url_for('generacionTicketVista.listar_tickets') }}">
             <i class="bi bi-journal-check"></i> Asignación de actividades
           </a>
         </li>
+        {% endif %}
         <li class="nav-item mb-2">
           <a class="nav-link" href="#">
             <i class="bi bi-gear"></i> Configuración
