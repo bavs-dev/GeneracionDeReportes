@@ -1,64 +1,244 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>{% block title %}Dashboard{% endblock %}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <style>
-        body {
-            min-height: 100vh;
-            display: flex;
-        }
-        .sidebar {
-            width: 250px;
-            background: #f8f9fa;
-            padding: 1rem;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-        }
-        .content {
-            flex: 1;
-            padding: 1.5rem;
-        }
-        .navbar-custom {
-            background-color: #ffffff;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .user-info i {
-            font-size: 1.2rem;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>{% block title %}Dashboard{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --vino: #7B1E3B;
+      --vino-hover: #A42448;
+      --beige: #F5F1E3;
+      --blanco: #FFFFFF;
+      --gris-suave: #f0f0f0;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background-color: var(--gris-suave);
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .navbar-custom {
+      background-color: var(--blanco);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 0.75rem 1rem;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      height: 56px;
+      display: flex;
+      align-items: center;
+    }
+
+    .navbar-brand {
+      color: var(--vino);
+      font-weight: bold;
+      font-size: 1.4rem;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .user-info i {
+      font-size: 1.5rem;
+      color: var(--vino);
+    }
+
+    .btn-outline-danger {
+      border-color: var(--vino);
+      color: var(--vino);
+    }
+
+    .btn-outline-danger:hover {
+      background-color: var(--vino);
+      color: var(--blanco);
+    }
+
+    .wrapper {
+      display: flex;
+      flex: 1;
+      margin-top: 56px; /* deja espacio al navbar fijo */
+      height: calc(100vh - 56px);
+      overflow: hidden;
+    }
+
+    .sidebar {
+      width: 250px;
+      background: var(--vino);
+      color: var(--blanco);
+      padding: 1rem;
+      height: 100%;
+      overflow-y: auto;
+      position: fixed;
+      top: 56px;
+      left: 0;
+      z-index: 999;
+      transition: transform 0.3s ease;
+    }
+
+    .sidebar.hidden {
+      transform: translateX(-100%);
+    }
+
+    .sidebar h5 {
+      color: var(--beige);
+      margin-bottom: 2rem;
+    }
+
+    .sidebar .nav-link {
+      color: var(--beige);
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: background-color 0.3s;
+    }
+
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link.active {
+      background-color: var(--vino-hover);
+      color: var(--blanco);
+    }
+
+    .content {
+      margin-left: 250px;
+      flex: 1;
+      padding: 1.5rem;
+      background-color: var(--beige);
+      height: 100%;
+      overflow-y: auto;
+      transition: margin-left 0.3s ease;
+    }
+
+    .content.full-width {
+      margin-left: 0;
+    }
+
+    .alert {
+      margin-top: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+
+      .sidebar.show {
+        transform: translateX(0);
+      }
+
+      .content {
+        margin-left: 0;
+      }
+    }
+
+  </style>
 </head>
 <body>
-    <div class="sidebar">
-        <h5 class="mb-4"><i class="bi bi-speedometer2"></i> Menú</h5>
-        <ul class="nav flex-column">
 
-            <!-- Puedes agregar más elementos aquí -->
-        </ul>
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-custom">
+    <div class="container-fluid justify-content-between">
+      <div class="d-flex align-items-center gap-2">
+        <button class="btn btn-outline-danger btn-sm" id="toggleSidebar">
+          <i class="bi bi-list"></i>
+        </button>
+        <span class="navbar-brand">Dashboard</span>
+      </div>
+
+      <div class="user-info">
+        <i class="bi bi-person-circle"></i>
+        <span>{{ usuario.nombre }} {{ usuario.apellidoP }} {{ usuario.apellidoM }}</span>
+        <a class="btn btn-outline-danger btn-sm" href="{{ url_for('auth.logout') }}">
+          Cerrar sesión
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- CONTENEDOR PRINCIPAL -->
+  <div class="wrapper">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+      <ul class="nav flex-column">
+        <li class="nav-item mb-2">
+          <a class="nav-link" href="{{ url_for('usuarios.listar_usuarios') }}">
+            <i class="bi bi-people"></i> Gestión de Usuarios
+          </a>
+        </li>
+        <li class="nav-item mb-2">
+          <a class="nav-link" href="{{ url_for('reporteTicket.listar_tickets') }}">
+            <i class="bi bi-card-list"></i> Tickets / Reportes
+          </a>
+        </li>
+        <li class="nav-item mb-2">
+          <a class="nav-link" href="{{ url_for('generacionTicket.cargar_catalogos') }}">
+            <i class="bi bi-plus-square"></i> Levantar Ticket
+          </a>
+        </li>
+        <li class="nav-item mb-2">
+          <a class="nav-link" href="{{ url_for('generacionTicketVista.listar_tickets') }}">
+            <i class="bi bi-journal-check"></i> Asignación de actividades
+          </a>
+        </li>
+        <li class="nav-item mb-2">
+          <a class="nav-link" href="#">
+            <i class="bi bi-gear"></i> Configuración
+          </a>
+        </li>
+      </ul>
     </div>
 
-    <div class="content">
-        <nav class="navbar navbar-expand-lg navbar-custom mb-4">
-            <div class="container-fluid justify-content-between">
-                <span class="navbar-brand">Dashboard</span>
-                <div class="user-info">
-                    <i class="bi bi-person-circle"></i>
-                    <span>{{ usuario.usuario }}</span>
-                    <a class="btn btn-outline-danger btn-sm" href="{{ url_for('auth.logout') }}">Cerrar sesión</a>
-                </div>
+    <!-- CONTENIDO -->
+    <div class="content" id="content">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-        </nav>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
 
-        {% block content %}
-        {% endblock %}
+      {% block content %}
+      {% endblock %}
     </div>
+  </div>
+
+  <script>
+    const toggleBtn = document.getElementById('toggleSidebar');
+    const sidebar = document.getElementById('sidebar');
+    const content = document.getElementById('content');
+
+    toggleBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('hidden');
+      content.classList.toggle('full-width');
+    });
+  </script>
 
 </body>
 </html>

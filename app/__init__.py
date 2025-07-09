@@ -17,8 +17,9 @@ migrate = Migrate()
 load_dotenv()
 
 def create_app():
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder="../static")
     app.config.from_object(Config)
+
 
     db.init_app(app)
     login_manager.init_app(app)
@@ -37,9 +38,23 @@ def create_app():
     # Registrar blueprints
     from app.controllers.auth_controller import auth
     from app.controllers.dashboard import main
+    from app.controllers.usuario_controller import usuario_bp  # Importa el Blueprint
+    from app.controllers.generacion_ticket_controller import  generacionTicket_bp # importamos el Blueprint
+    from app.controllers.generacionDeTicketVistaController import generacionTicketVista_bp
+    from app.controllers.reporteController import reporteTicket_bp
+    from flask_login import current_user
 
     app.register_blueprint(auth)
     app.register_blueprint(main)
+    app.register_blueprint(usuario_bp)  # REGISTRO DEL CRUD DE USUARIOS
+    app.register_blueprint(generacionTicket_bp) #
+    app.register_blueprint(generacionTicketVista_bp)
+    app.register_blueprint(reporteTicket_bp)
+    # Inyectar automáticamente 'usuario' en todas las plantillas
+    @app.context_processor
+    def inyectar_usuario():
+        return dict(usuario=current_user)
+
 
     # Ruta de inicio con verificación de base de datos
     @app.route('/')
