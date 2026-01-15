@@ -1,0 +1,484 @@
+{% extends "dashboard_base.html" %}
+
+{% block title %}Panel de Control{% endblock %}
+
+{% block content %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- Estilos y scripts de DataTables -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+
+<div class="container mt-4">
+    <h2>Mis tickets generados</h2>
+
+
+    <!-- Buscador Global -->
+
+
+
+    <div class="input-group mb-3">
+  <span class="input-group-text" id="basic-addon1">
+    <i class="bi bi-search"></i>
+  </span>
+  <input type="text" id="buscadorGeneral" class="form-control" placeholder="Buscar por cualquier campo..." aria-label="Buscar" aria-describedby="basic-addon1">
+</div>
+
+
+
+
+    <table id="tablaUsuarios" class="table table-bordered text-center">
+        <thead>
+            <tr>
+                <th>Estado</th>
+                <th>Numero de Ticket</th>
+                <th>Fecha de Registro</th>
+                <th>Prioridad</th>
+                <th>Asunto</th>
+
+
+                <th>Acciones</th>
+            </tr>
+            <!-- Filtros individuales -->
+            <tr>
+                <th><input type="text" class="form-control form-control-sm" placeholder="Filtrar Estado"></th>
+                <th><input type="text" class="form-control form-control-sm" placeholder="Filtrar Numero"></th>
+                <th><input type="text" class="form-control form-control-sm" placeholder="Filtrar Fecha"></th>
+                <th><input type="text" class="form-control form-control-sm" placeholder="Filtrar Prioridad"></th>
+                <th><input type="text" class="form-control form-control-sm" placeholder="Filtrar Asunto"></th>
+
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for u in listTickets %}
+            <tr>
+
+                <td>
+    {% if u.estadosTicketid.nombre == 'Abierto' %}
+        <span class="badge bg-primary">{{ u.estadosTicketid.nombre }}</span>
+    {% elif u.estadosTicketid.nombre == 'En Proceso' %}
+        <span class="badge bg-warning text-dark">{{ u.estadosTicketid.nombre }}</span>
+    {% elif u.estadosTicketid.nombre == 'En Espera' %}
+        <span class="badge bg-info text-dark">{{ u.estadosTicketid.nombre }}</span>
+    {% elif u.estadosTicketid.nombre == 'Resuelto' %}
+        <span class="badge bg-success">{{ u.estadosTicketid.nombre }}</span>
+    {% elif u.estadosTicketid.nombre == 'Cerrado' %}
+        <span class="badge bg-secondary">{{ u.estadosTicketid.nombre }}</span>
+    {% elif u.estadosTicketid.nombre == 'Cancelado' %}
+        <span class="badge bg-danger">{{ u.estadosTicketid.nombre }}</span>
+    {% else %}
+        <span class="badge bg-light text-dark">{{ u.estadosTicketid.nombre }}</span>
+    {% endif %}
+</td>
+
+
+                <td>{{ u.numero_ticket }}</td>
+                <td>{{ u.fecha_registro }}</td>
+
+                 <td>
+            {% if u.prioridad.nombre == 'Baja' %}
+                <span class="badge bg-primary">{{ u.prioridad.nombre }}</span>
+            {% elif u.prioridad.nombre == 'Media' %}
+                <span class="badge bg-warning text-dark">{{ u.prioridad.nombre }}</span>
+            {% elif u.prioridad.nombre == 'Alta' %}
+                <span class="badge bg-danger">{{ u.prioridad.nombre }}</span>
+            {% else %}
+                <span class="badge bg-secondary">{{ u.prioridad.nombre }}</span>
+            {% endif %}
+        </td>
+
+                <td>{{ u.asunto }}</td>
+
+             <td class="text-center">
+                 <div class="d-flex gap-2">
+
+{% if current_user.rol_id == 2 or current_user.rol_id == 3 %}
+ <button class="btn btn-warning btn-sm me-1"
+    onclick="abrirModalEditar(
+        {{ u.id }},
+         '{{ u.numero_ticket }}',
+        {{ u.cat_prioridad }},
+        '{{ u.asunto }}',
+        '{{ u.solicitante_id }}',
+        '{{ u.afectado_id }}',
+
+        {{ u.area }},
+        {{ u.tipo_falla_id }},
+        '{{ u.service_tag }}',
+        '{{ u.numero_serie }}',
+        '{{ u.ip_equipo }}',
+
+        '{{ u.extension }}',
+        {{ u.piso }},
+        '{{ u.datos_atencion }}',
+        '{{ u.comentario_usuario }}',
+        '{{ u.sugerencias }}',
+        {{ u.estado_id }},
+          {{u.tecnico_asignado_id}},
+        {{ 'true' if u.evidencia else 'false' }}
+    )"
+>
+    <i class="fas fa-edit"></i>
+</button>
+{% endif %}
+
+
+                     <button class="btn btn-success btn-sm me-1"
+
+    onclick="abrirModalEditarDetalles(
+        {{ u.id }},
+         '{{ u.numero_ticket }}',
+        {{ u.cat_prioridad }},
+        '{{ u.asunto }}',
+        '{{ u.solicitante_id }}',
+        '{{ u.afectado_id }}',
+
+        {{ u.area }},
+        {{ u.tipo_falla_id }},
+        '{{ u.service_tag }}',
+        '{{ u.numero_serie }}',
+        '{{ u.ip_equipo }}',
+
+        '{{ u.extension }}',
+        {{ u.piso }},
+        '{{ u.datos_atencion }}',
+        '{{ u.comentario_usuario }}',
+        '{{ u.sugerencias }}',
+        {{ u.estado_id }},
+          {{u.tecnico_asignado_id}},
+        {{ 'true' if u.evidencia else 'false' }}
+    )"
+>
+
+      <i class="fas fa-eye"></i>
+</button>
+
+
+{% if current_user.rol_id == 2 or current_user.rol_id == 3 %}
+                    <form action="{{ url_for('reporteTicket.eliminar_tiket', id=u.id) }}" method="post" style="display:inline;" onsubmit="return confirmarEliminacion(this)">
+                        <button type="submit" class="btn btn-danger btn-sm" title="Eliminar"><i class="fas fa-trash-alt"></i></button>
+                    </form>
+{% endif %}
+</div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal Crear -->
+<div class="modal fade" id="modalCrear" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+      <form class="modal-content" action="{{ url_for('usuarios.crear_usuario') }}" method="post" onsubmit="return confirmarAccion('crear', event)">
+      <div class="modal-header">
+        <h5 class="modal-title">Crear Usuario</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        {% include 'usuarios/formulario.html' %}
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<!-- Modal Editar -->
+<div class="modal fade" id="modalEditar" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg"> <!-- Clase para agrandar el modal -->
+    <form class="modal-content" enctype="multipart/form-data" id="formEditar" method="post" >
+
+      <div class="modal-header">
+        <h5 class="modal-title">Editar Ticket</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        {% include 'Reportes/ReporteVistaFormulario.html' %}
+      </div>
+
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">Actualizar</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<!-- Modal Editar -->
+<div class="modal fade" id="modaldetalles" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg"> <!-- Clase para agrandar el modal -->
+    <form class="modal-content" enctype="multipart/form-data" id="formdetalles" method="post" onsubmit="return confirmarAccion('editar', event)">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Detalles del Ticket</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        {% include 'Reportes/ReporteDeTicketDetalles.html' %}
+      </div>
+
+      <div class="modal-footer">
+
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+
+
+<script>
+
+
+
+
+function abrirModalEditar(
+    id,numero_ticket, cat_prioridad, asunto, solicitante_id, afectado_id, area, tipo_falla_id,
+    service_tag, numero_serie, ip_equipo, extension, piso,
+    datos_atencion, comentario_usuario, sugerencias, estado_id,tecnico_asignado_id,evidencia
+) {
+    // Debug para verificar valores
+    console.log({
+        cat_prioridad,
+        solicitante_id,
+        afectado_id,
+        area,
+        tipo_falla_id,
+        estado_id
+    });
+
+    // Llenar los campos del formulario
+     document.querySelector('#modalEditar input[name="numeroTicket"]').value = numero_ticket;
+    document.querySelector('#modalEditar select[name="cat_prioridad"]').value = cat_prioridad;
+    //document.querySelector('#modalEditar select[name="cat_prioridad"]').value = String(cat_prioridad);
+    document.querySelector('#modalEditar input[name="asunto"]').value = asunto;
+    document.querySelector('#modalEditar input[name="solicitante_id"]').value = solicitante_id;
+    document.querySelector('#modalEditar input[name="afectado_id"]').value = afectado_id;
+    document.querySelector('#modalEditar select[name="area"]').value = area;
+    document.querySelector('#modalEditar select[name="tipo_falla_id"]').value = tipo_falla_id;
+    document.querySelector('#modalEditar input[name="service_tag"]').value = service_tag;
+    document.querySelector('#modalEditar input[name="numero_serie"]').value = numero_serie;
+    document.querySelector('#modalEditar input[name="ip_equipo"]').value = ip_equipo;
+    document.querySelector('#modalEditar input[name="extension"]').value = extension;
+    document.querySelector('#modalEditar input[name="piso"]').value = piso;
+    document.querySelector('#modalEditar textarea[name="datos_atencion"]').value = datos_atencion;
+    document.querySelector('#modalEditar textarea[name="comentario_usuario"]').value = comentario_usuario;
+    document.querySelector('#modalEditar textarea[name="sugerencias"]').value = sugerencias;
+    document.querySelector('#modalEditar select[name="estado_id"]').value = estado_id;
+
+    document.querySelector('#modalEditar select[name="tecnicoAsiganado"]').value = tecnico_asignado_id;
+
+    // Configurar acción del formulario
+    document.querySelector('#formEditar').action = `/reporteTicket/actualizar_ticket/${id}`;
+
+    if (evidencia === true || evidencia === 'true') {
+        document.getElementById('archivo_actual').style.display = 'block';
+        document.getElementById('linkArchivo').href = `/reporteTicket/descargar_evidencia/${id}`;
+        console.log("Sí hay evidencia");
+    } else {
+        document.getElementById('archivo_actual').style.display = 'none';
+        console.log("No hay evidencia");
+    }
+
+    // Mostrar el modal
+    new bootstrap.Modal(document.getElementById('modalEditar')).show();
+}
+
+
+function abrirModalEditarDetalles(
+    id,numero_ticket, cat_prioridad, asunto, solicitante_id, afectado_id, area, tipo_falla_id,
+    service_tag, numero_serie, ip_equipo, extension, piso,
+    datos_atencion, comentario_usuario, sugerencias, estado_id,tecnico_asignado_id,evidencia
+) {
+
+
+    // Llenar los campos del formulario
+     document.querySelector('#modaldetalles input[name="numeroTicket"]').value = numero_ticket;
+    document.querySelector('#modaldetalles select[name="cat_prioridad"]').value = cat_prioridad;
+    //document.querySelector('#modaldetalles select[name="cat_prioridad"]').value = String(cat_prioridad);
+    document.querySelector('#modaldetalles input[name="asunto"]').value = asunto;
+    document.querySelector('#modaldetalles input[name="solicitante_id"]').value = solicitante_id;
+    document.querySelector('#modaldetalles input[name="afectado_id"]').value = afectado_id;
+    document.querySelector('#modaldetalles select[name="area"]').value = area;
+    document.querySelector('#modaldetalles select[name="tipo_falla_id"]').value = tipo_falla_id;
+    document.querySelector('#modaldetalles input[name="service_tag"]').value = service_tag;
+    document.querySelector('#modaldetalles input[name="numero_serie"]').value = numero_serie;
+    document.querySelector('#modaldetalles input[name="ip_equipo"]').value = ip_equipo;
+    document.querySelector('#modaldetalles input[name="extension"]').value = extension;
+    document.querySelector('#modaldetalles input[name="piso"]').value = piso;
+    document.querySelector('#modaldetalles textarea[name="datos_atencion"]').value = datos_atencion;
+    document.querySelector('#modaldetalles textarea[name="comentario_usuario"]').value = comentario_usuario;
+    document.querySelector('#modaldetalles textarea[name="sugerencias"]').value = sugerencias;
+    document.querySelector('#modaldetalles select[name="estado_id"]').value = estado_id;
+
+    document.querySelector('#modaldetalles select[name="tecnicoAsiganado"]').value = tecnico_asignado_id;
+
+
+
+    if (evidencia === true || evidencia === 'true') {
+        document.getElementById('archivo_actual_detalles').style.display = 'block';
+        document.getElementById('linkArchivo_detalles').href = `/reporteTicket/descargar_evidencias/${id}`;
+        console.log("Sí hay evidencia");
+    } else {
+        document.getElementById('archivo_actual').style.display = 'none';
+        console.log("No hay evidencia");
+    }
+
+    // Mostrar el modal
+    new bootstrap.Modal(document.getElementById('modaldetalles')).show();
+}
+
+
+
+
+
+
+function confirmarAccion(accion, e) {
+    e.preventDefault();
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: `Vas a ${accion} este ticket.`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, continuar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) e.target.submit();
+    });
+    return false;
+}
+
+function confirmarEliminacion(form) {
+    event.preventDefault();
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: "El usuario será eliminado permanentemente.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) form.submit();
+    });
+    return false;
+}
+
+$(document).ready(function() {
+    var tabla = $('#tablaUsuarios').DataTable({
+        "pageLength": 5,
+        "lengthMenu": [5, 10, 25, 50],
+        "language": {
+            "search": "Buscar en tabla:",
+            "lengthMenu": "Mostrar _MENU_ registros",
+            "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+            "paginate": {
+                "first": "Primero",
+                "last": "Último",
+                "next": "Siguiente",
+                "previous": "Anterior"
+            },
+            "zeroRecords": "No se encontraron resultados",
+            "infoEmpty": "Mostrando 0 a 0 de 0 registros",
+            "infoFiltered": "(filtrado de _MAX_ registros totales)"
+        },
+        "dom": 't<"d-flex justify-content-between"lip>'
+    });
+
+    // Buscador global arriba de la tabla
+    $('#buscadorGeneral').on('keyup', function() {
+        tabla.search(this.value).draw();
+    });
+
+    // Filtros individuales por columna
+    $('#tablaUsuarios thead tr:eq(1) th').each(function(i) {
+        $('input', this).on('keyup change', function() {
+            if (tabla.column(i).search() !== this.value) {
+                tabla.column(i).search(this.value).draw();
+            }
+        });
+    });
+});
+
+    document.getElementById('formEditar').addEventListener('submit', async function(e) {
+    e.preventDefault(); // Evitar envío normal
+
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: 'Se actualizará el ticket y se descargarán los archivos generados.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, actualizar',
+        cancelButtonText: 'Cancelar'
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            const form = e.target;
+            const formData = new FormData(form);
+            const action = form.getAttribute('action');
+
+            try {
+                const response = await fetch(action, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Descargar PDF
+                    const linkPDF = document.createElement('a');
+                    linkPDF.href = result.pdf_url;
+                    linkPDF.download = '';
+                    linkPDF.click();
+
+                    // Descargar Excel
+                    const linkExcel = document.createElement('a');
+                    linkExcel.href = result.excel_url;
+                    linkExcel.download = '';
+                    linkExcel.click();
+
+                    // Cerrar el modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('modalEditar'));
+                    modal.hide();
+
+                    // Mostrar éxito
+                    Swal.fire('¡Actualizado!', 'El ticket fue actualizado correctamente.', 'success');
+
+                    // Recargar página después de unos segundos
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    Swal.fire('Error', 'No se pudo actualizar el ticket.', 'error');
+                }
+
+            } catch (err) {
+                console.error('Error:', err);
+                Swal.fire('Error', 'Hubo un problema al procesar la solicitud.', 'error');
+            }
+        }
+    });
+});
+
+
+</script>
+
+
+
+
+
+
+{% endblock %}
